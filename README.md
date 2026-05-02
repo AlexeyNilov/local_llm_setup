@@ -10,13 +10,16 @@ Practical research notes on running LLMs locally: how to use tools like Ollama, 
 ├── README.md
 ├── TODO.md
 ├── discussions/
+├── ideas/
 ├── notes/
 └── stack/
-    └── ollama/
+    ├── ollama/
+    └── open-webui/
 ```
 
 - `notes/`: durable notes and synthesized takeaways
 - `discussions/`: decisions, debates, and useful exchanges
+- `ideas/`: exploratory notes and speculative directions that are not yet synthesized
 - `stack/`: tool-specific setup notes and practical experiments
 - `TODO.md`: open tasks and follow-up work
 - `AGENTS.md`: workspace instructions for LLM assistants working in this repo
