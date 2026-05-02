@@ -13,7 +13,6 @@ Practical research notes on running LLMs locally: how to use tools like Ollama, 
 ├── notes/
 └── stack/
     └── ollama/
-        └── current_setup.md
 ```
 
 - `notes/`: durable notes and synthesized takeaways
