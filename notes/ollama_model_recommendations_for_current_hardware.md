@@ -16,6 +16,7 @@ There is no single model that is simultaneously optimal for chat, coding, and re
 - **Best single all-rounder:** `qwen3:14b`
 - **Best coding-first model:** `devstral:24b`
 - **Best reasoning / research-first model:** `deepseek-r1:14b`
+- **Best lighter alternative to `deepseek-r1:14b`:** `deepseek-r1:8b`
 - **Best if vision matters:** `gemma3:12b`
 
 ## Why This Holds Up
@@ -23,7 +24,18 @@ There is no single model that is simultaneously optimal for chat, coding, and re
 - `qwen3:14b` is the best balance candidate for mixed use. It is small enough to fit comfortably while still being strong enough for general chat, coding help, and synthesis.
 - `devstral:24b` is the strongest coding-specific recommendation because it is explicitly positioned for software engineering and tool-oriented work. The tradeoff is speed.
 - `deepseek-r1:14b` is a better fit when "research" means multi-step reasoning, structured comparison, and deliberate synthesis rather than quick interaction.
+- `deepseek-r1:8b` is the closest smaller substitute if the goal is to preserve the same general reasoning style while cutting memory use and improving latency. It is a better "same idea, smaller" choice than switching to a different family.
 - `gemma3:12b` is the useful exception because it supports image input, which matters if research includes screenshots, diagrams, or document images.
+
+## If `deepseek-r1:14b` Feels Too Heavy
+
+Use these in order of similarity:
+
+- `deepseek-r1:8b` if you want the closest behavioral match with lower latency
+- `qwen3:8b` if you are willing to give up some of the R1-style deliberate reasoning in exchange for a faster general-purpose model
+- `deepseek-r1:7b` only if `8b` is still heavier than you want
+
+The important distinction is between "smaller" and "similar." `qwen3:8b` is likely a good faster model, but `deepseek-r1:8b` is the more defensible answer to "something like `deepseek-r1:14b`, just lighter."
 
 ## What Is Probably Not Optimal
 
@@ -40,6 +52,7 @@ The issue is not whether they can be forced to run. The issue is whether they re
 - `qwen3:14b` as the default general model
 - `devstral:24b` for coding sessions
 - `deepseek-r1:14b` for hard reasoning
+- `deepseek-r1:8b` as the lower-latency reasoning option
 - `gemma3:12b` only when image input is useful
 
 ## Suggested Pull Commands
@@ -48,6 +61,7 @@ The issue is not whether they can be forced to run. The issue is whether they re
 ollama pull qwen3:14b
 ollama pull devstral:24b
 ollama pull deepseek-r1:14b
+ollama pull deepseek-r1:8b
 ollama pull gemma3:12b
 ```
 
