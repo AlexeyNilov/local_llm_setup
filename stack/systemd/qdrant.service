@@ -1,0 +1,16 @@
+[Unit]
+Description=Qdrant vector database
+Documentation=file:/home/lexa/an/git/local_llm_setup/stack/systemd/README.md
+After=default.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/lexa/an/git/local_llm_setup
+ExecStart=/home/lexa/an/git/local_llm_setup/stack/qdrant/run_qdrant.sh
+ExecStop=/usr/bin/sudo -n /usr/bin/docker stop qdrant-llm-stack
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+
+[Install]
+WantedBy=default.target

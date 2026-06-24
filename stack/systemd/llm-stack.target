@@ -1,0 +1,8 @@
+[Unit]
+Description=Local LLM stack
+Documentation=file:/home/lexa/an/git/local_llm_setup/stack/systemd/README.md
+Wants=qdrant.service llama-gemma.service llama-jina.service
+After=qdrant.service llama-gemma.service llama-jina.service
+
+[Install]
+WantedBy=default.target
