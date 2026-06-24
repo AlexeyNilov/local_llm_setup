@@ -3,3 +3,4 @@
 .venv
 backup/
 stack/env.local.sh
+bench/

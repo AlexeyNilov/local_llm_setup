@@ -11,6 +11,7 @@ cd "$LLAMA_CPP_BACKEND_DIR" || exit 1
 
 : "${GEMMA_CTX_SIZE:=8192}"
 : "${GEMMA_GPU_LAYERS:=all}"
+: "${GEMMA_DEVICE:=Vulkan0}"
 : "${GEMMA_THREADS:=8}"
 : "${GEMMA_THREADS_BATCH:=8}"
 : "${GEMMA_BATCH_SIZE:=2048}"
@@ -18,6 +19,7 @@ cd "$LLAMA_CPP_BACKEND_DIR" || exit 1
 : "${GEMMA_PARALLEL:=1}"
 : "${GEMMA_CACHE_TYPE_K:=f16}"
 : "${GEMMA_CACHE_TYPE_V:=f16}"
+: "${GEMMA_FLASH_ATTN:=on}"
 : "${GEMMA_MODEL_ALIAS:=gemma-4-12b}"
 
 ./llama-server \
@@ -25,6 +27,7 @@ cd "$LLAMA_CPP_BACKEND_DIR" || exit 1
   --alias "$GEMMA_MODEL_ALIAS" \
   --ctx-size "$GEMMA_CTX_SIZE" \
   --n-gpu-layers "$GEMMA_GPU_LAYERS" \
+  --device "$GEMMA_DEVICE" \
   --threads "$GEMMA_THREADS" \
   --threads-batch "$GEMMA_THREADS_BATCH" \
   --batch-size "$GEMMA_BATCH_SIZE" \
@@ -33,7 +36,7 @@ cd "$LLAMA_CPP_BACKEND_DIR" || exit 1
   --cache-type-k "$GEMMA_CACHE_TYPE_K" \
   --cache-type-v "$GEMMA_CACHE_TYPE_V" \
   --mmap \
-  -fa on \
+  --flash-attn "$GEMMA_FLASH_ATTN" \
   --cache-reuse 256 \
   --jinja \
   --temp 1.0 --top-p 0.95 --top-k 64 \

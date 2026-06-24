@@ -153,3 +153,89 @@ for chat and coding workflows.
 The CPU-only and GPU-offload cases are a sanity check. If GPU offload is not
 clearly faster than CPU-only, the backend/device path is probably wrong or the
 GPU is already resource constrained.
+
+### Results: 20260624-121325
+
+Run metadata:
+
+```text
+backend=/home/lexa/Downloads/backends/llama-cpp-vulkan-full
+build_commit=88636e178
+build_number=9777
+model=gemma-4-12B-it-QAT-Q4_0.gguf
+device=Vulkan0
+threads=8
+repetitions=5
+```
+
+Environment looked clean enough for interpretation:
+
+```text
+Vulkan0: AMD Radeon RX 9060 XT (RADV GFX1200) (16304 MiB, 15640 MiB free)
+rocm-smi: VRAM 4%, GPU 0% before the run
+```
+
+Baseline:
+
+```text
+512 prompt tokens:        1264 tok/s
+128 generated tokens:       38.4 tok/s
+512 prompt + 128 gen:      167.6 tok/s combined
+```
+
+Workload shape matters:
+
+| case | combined tok/s | avg time |
+|---|---:|---:|
+| 128 prompt + 128 gen | 73.8 | 3.47 s |
+| 512 prompt + 128 gen | 167.6 | 3.82 s |
+| 2048 prompt + 128 gen | 419.9 | 5.18 s |
+| 4096 prompt + 256 gen | 415.6 | 10.47 s |
+
+Interpretation: generation is the limiting phase for short interactive prompts.
+The combined tok/s number rises with longer prompts because prompt processing is
+much faster than token generation.
+
+Parameter findings:
+
+| variant | combined tok/s | result |
+|---|---:|---|
+| `-b 1024 -ub 256` | 167.3 | no meaningful win |
+| `-b 2048 -ub 512` | 167.3-167.6 | keep this default |
+| `-b 4096 -ub 512` | 167.3 | no meaningful win |
+| `-b 4096 -ub 1024` | 167.4 | no meaningful win |
+| KV `f16/f16` | 167.4 | best/neutral |
+| KV `q8_0/q8_0` | 164.1 | slower, about -2% |
+| KV `q4_0/q4_0` | 164.1 | slower, about -2% |
+| flash attention `on` | 167.3 | keep enabled |
+| flash attention `auto` | 167.5 | effectively same as on |
+| flash attention `off` | 162.8 | slower, about -3% |
+| CPU-only offload | 36.5 | much slower |
+| GPU offload | 167.5 | required for useful speed |
+
+Current best settings for `start_gemma.sh`:
+
+```text
+--n-gpu-layers all
+--threads 8
+--threads-batch 8
+--batch-size 2048
+--ubatch-size 512
+--cache-type-k f16
+--cache-type-v f16
+--mmap
+-fa on
+```
+
+No benchmarked change justifies moving away from those defaults. The useful
+optimization was not batch/cache tuning; it was making sure the server runs on
+the discrete GPU with full offload and enough free VRAM.
+
+Limits of this run:
+
+- It does not test server concurrency, `--parallel`, prompt caching, or
+  `--cache-reuse`.
+- It does not directly test `--ctx-size`; larger context mainly increases KV
+  memory pressure and can still hurt real server capacity.
+- It benchmarks raw llama.cpp execution, not full client/server latency through
+  the OpenAI-compatible API.
