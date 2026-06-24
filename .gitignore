@@ -1,3 +1,5 @@
 .agents
 .codex
 .venv
+backup/
+stack/env.local.sh
