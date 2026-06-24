@@ -239,3 +239,91 @@ Limits of this run:
   memory pressure and can still hurt real server capacity.
 - It benchmarks raw llama.cpp execution, not full client/server latency through
   the OpenAI-compatible API.
+
+### MTP Server Test
+
+Use the server benchmark for MTP. `llama-bench` does not expose the relevant
+speculative decoding flags, and the useful question is end-to-end server
+latency.
+
+Script:
+
+```sh
+stack/llama_cpp/bench_gemma_server.sh
+```
+
+Dry-run:
+
+```sh
+stack/llama_cpp/bench_gemma_server.sh dry-run
+```
+
+Run:
+
+```sh
+stack/llama_cpp/bench_gemma_server.sh run
+```
+
+The script starts two temporary servers on port `12346`:
+
+- baseline: normal Gemma server
+- mtp: same settings plus `--spec-type draft-mtp`
+
+It writes results under:
+
+```text
+bench/server-results/YYYYMMDD-HHMMSS/
+```
+
+The summary files are:
+
+```text
+summary.csv
+summary.md
+```
+
+Decision rule: promote MTP only if generation throughput improves by at least
+15%, wall time improves on medium/coding cases, output quality is not visibly
+worse, and VRAM headroom remains acceptable. If the gain is under 10%, leave
+MTP off by default.
+
+### Results: MTP Server Test 20260624-130453
+
+Run metadata:
+
+```text
+backend=/home/lexa/Downloads/backends/llama-cpp-vulkan-full
+model=gemma-4-12B-it-qat-UD-Q4_K_XL.gguf
+mtp_model=mtp-gemma-4-12B-it.gguf
+port=12346
+repetitions=3
+```
+
+Timing summary:
+
+| case | baseline wall | mtp wall | wall change | baseline gen tok/s | mtp gen tok/s | gen change |
+|---|---:|---:|---:|---:|---:|---:|
+| short | 3.369 s | 1.398 s | -58.5% | 39.50 | 101.05 | +155.8% |
+| medium | 6.665 s | 2.541 s | -61.9% | 39.26 | 107.16 | +173.0% |
+| long | 6.725 s | 3.240 s | -51.8% | 39.19 | 84.56 | +115.7% |
+| coding | 13.340 s | 5.976 s | -55.2% | 38.96 | 88.67 | +127.6% |
+
+MTP is clearly faster on this server benchmark. The MTP server log also confirms
+high draft acceptance:
+
+```text
+short:  draft acceptance = 0.83621, mean acceptance length = 4.34
+medium: draft acceptance = 0.88839, mean acceptance length = 4.55
+long:   draft acceptance = 0.65248, mean acceptance length = 3.59
+coding: draft acceptance = 0.70019, mean acceptance length = 3.79
+```
+
+Important caveat: this benchmark used `/completion` with raw prompts, and the
+generated outputs were visibly degenerate/repetitive for both baseline and MTP.
+That means this run is valid as a speed A/B test, but not as an answer-quality
+test. Before enabling MTP by default, run a second quality/latency check through
+the chat endpoint or through the same OpenAI-compatible client used in normal
+workflows.
+
+Provisional decision: MTP is worth enabling behind an opt-in flag now. Promote it
+to the default only after the chat-endpoint test shows comparable output quality.

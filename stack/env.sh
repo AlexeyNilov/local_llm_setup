@@ -19,8 +19,10 @@ fi
 : "${LLAMA_CPP_BENCH_BACKEND_DIR:=$LLM_BACKENDS_DIR/llama-cpp-vulkan-full}"
 : "${LLAMA_CPP_BACKEND_DIR:=$LLM_BACKENDS_DIR/llama-cpp-vulkan-full}"
 : "${JINA_EMBEDDING_MODEL:=$LMSTUDIO_HOME/models/jinaai/jina-embeddings-v5-text-small-retrieval/v5-small-retrieval-Q8_0.gguf}"
-: "${GEMMA_MODEL:=$LMSTUDIO_HOME/models/lmstudio-community/gemma-4-12B-it-QAT-GGUF/gemma-4-12B-it-QAT-Q4_0.gguf}"
-# : "${GEMMA_MODEL:=$LLM_MODELS_DIR/llama-cpp/models/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF/gemma4-v2-Q4_K_M.gguf}"
+: "${GEMMA_MODEL_DIR:=$LLM_MODELS_DIR/llama-cpp/models/unsloth/gemma-4-12B-it-qat-GGUF}"
+: "${GEMMA_MODEL:=$GEMMA_MODEL_DIR/gemma-4-12B-it-qat-UD-Q4_K_XL.gguf}"
+: "${GEMMA_MTP_MODEL:=$GEMMA_MODEL_DIR/mtp-gemma-4-12B-it.gguf}"
+: "${GEMMA_MMPROJ:=$GEMMA_MODEL_DIR/mmproj-BF16.gguf}"
 : "${LM_STUDIO_APPIMAGE:=$LLM_DOWNLOADS/LM-Studio-0.4.16-1-x64.AppImage}"
 
 require_dir() {

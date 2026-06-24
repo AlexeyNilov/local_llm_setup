@@ -21,7 +21,23 @@ cd "$LLAMA_CPP_BACKEND_DIR" || exit 1
 : "${GEMMA_CACHE_TYPE_V:=f16}"
 : "${GEMMA_FLASH_ATTN:=on}"
 : "${GEMMA_MODEL_ALIAS:=gemma-4-12b}"
+: "${GEMMA_SPEC_TYPE:=draft-mtp}"
+: "${GEMMA_SPEC_DRAFT_N_MAX:=4}"
+: "${GEMMA_SPEC_DRAFT_DEVICE:=$GEMMA_DEVICE}"
+: "${GEMMA_SPEC_DRAFT_GPU_LAYERS:=$GEMMA_GPU_LAYERS}"
 
+SPEC_ARGS=
+if [ "$GEMMA_SPEC_TYPE" != "none" ]; then
+  require_file "$GEMMA_MTP_MODEL"
+  SPEC_ARGS="
+    --spec-type $GEMMA_SPEC_TYPE
+    --spec-draft-model $GEMMA_MTP_MODEL
+    --spec-draft-n-max $GEMMA_SPEC_DRAFT_N_MAX
+    --spec-draft-device $GEMMA_SPEC_DRAFT_DEVICE
+    --spec-draft-ngl $GEMMA_SPEC_DRAFT_GPU_LAYERS"
+fi
+
+# shellcheck disable=SC2086
 ./llama-server \
   -m "$GEMMA_MODEL" \
   --alias "$GEMMA_MODEL_ALIAS" \
@@ -40,4 +56,5 @@ cd "$LLAMA_CPP_BACKEND_DIR" || exit 1
   --cache-reuse 256 \
   --jinja \
   --temp 1.0 --top-p 0.95 --top-k 64 \
-  --host 127.0.0.1 --port 12345
+  --host 127.0.0.1 --port 12345 \
+  $SPEC_ARGS
