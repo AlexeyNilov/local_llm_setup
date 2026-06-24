@@ -7,6 +7,7 @@ systemd unit directory, reload systemd, then start them explicitly.
 mkdir -p ~/.config/systemd/user
 cp stack/systemd/qdrant.service ~/.config/systemd/user/
 cp stack/systemd/llama-gemma.service ~/.config/systemd/user/
+cp stack/systemd/llama-agentic-gemma.service ~/.config/systemd/user/
 cp stack/systemd/llama-jina.service ~/.config/systemd/user/
 cp stack/systemd/llm-stack.target ~/.config/systemd/user/
 systemctl --user daemon-reload
@@ -39,7 +40,8 @@ systemctl --user stop llama-gemma.service
 ```
 
 Use `llama-jina.service` and `qdrant.service` in the same commands for the Jina
-embedding server and Qdrant.
+embedding server and Qdrant. Use `llama-agentic-gemma.service` for the agentic
+Gemma server.
 
 Qdrant is started through Docker. Because user services cannot prompt for a sudo
 password, `qdrant.service` expects `sudo -n docker ...` to work or it will fail.
