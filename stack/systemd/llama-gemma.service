@@ -1,0 +1,14 @@
+[Unit]
+Description=llama.cpp Gemma server
+Documentation=file:/home/lexa/an/git/local_llm_setup/stack/systemd/README.md
+After=default.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/lexa/an/git/local_llm_setup
+ExecStart=/home/lexa/an/git/local_llm_setup/stack/llama_cpp/start_gemma.sh
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
