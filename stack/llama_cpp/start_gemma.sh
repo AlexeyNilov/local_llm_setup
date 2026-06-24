@@ -18,9 +18,11 @@ cd "$LLAMA_CPP_BACKEND_DIR" || exit 1
 : "${GEMMA_PARALLEL:=1}"
 : "${GEMMA_CACHE_TYPE_K:=f16}"
 : "${GEMMA_CACHE_TYPE_V:=f16}"
+: "${GEMMA_MODEL_ALIAS:=gemma-4-12b}"
 
 ./llama-server \
   -m "$GEMMA_MODEL" \
+  --alias "$GEMMA_MODEL_ALIAS" \
   --ctx-size "$GEMMA_CTX_SIZE" \
   --n-gpu-layers "$GEMMA_GPU_LAYERS" \
   --threads "$GEMMA_THREADS" \

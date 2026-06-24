@@ -29,9 +29,9 @@ sys	0m0.246s
 #### gemma-4-12B-it-QAT-GGUF/gemma-4-12B-it-QAT-Q4_0.gguf
 
 ```text
-real	3m43.915s
-user	0m1.981s
-sys	0m0.246s
+real	3m46.065s
+user	0m2.022s
+sys	0m0.226s
 ```
 
 ## Using llama-bench
