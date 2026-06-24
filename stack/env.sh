@@ -17,7 +17,8 @@ fi
 : "${QDRANT_STORAGE_DIR:=$LLM_HOME/qdrant_storage}"
 : "${LLAMA_CPP_BACKEND_DIR:=$LMSTUDIO_HOME/extensions/backends/llama.cpp-linux-x86_64-vulkan-avx2-2.22.0}"
 : "${JINA_EMBEDDING_MODEL:=$LMSTUDIO_HOME/models/jinaai/jina-embeddings-v5-text-small-retrieval/v5-small-retrieval-Q8_0.gguf}"
-: "${GEMMA_MODEL:=$LLM_MODELS_DIR/llama-cpp/models/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF/gemma4-v2-Q4_K_M.gguf}"
+: "${GEMMA_MODEL:=$LMSTUDIO_HOME/models/lmstudio-community/gemma-4-12B-it-QAT-GGUF/gemma-4-12B-it-QAT-Q4_0.gguf}"
+# : "${GEMMA_MODEL:=$LLM_MODELS_DIR/llama-cpp/models/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF/gemma4-v2-Q4_K_M.gguf}"
 : "${LM_STUDIO_APPIMAGE:=$LLM_DOWNLOADS/LM-Studio-0.4.16-1-x64.AppImage}"
 
 require_dir() {
