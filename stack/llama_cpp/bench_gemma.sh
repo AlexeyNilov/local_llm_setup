@@ -10,6 +10,7 @@ REPO_DIR=$(CDPATH= cd -- "$STACK_DIR/.." && pwd)
 : "${GEMMA_BENCH_THREADS:=8}"
 : "${GEMMA_BENCH_REPETITIONS:=5}"
 : "${GEMMA_BENCH_GPU_LAYERS:=999}"
+: "${GEMMA_BENCH_DEVICE:=Vulkan0}"
 : "${GEMMA_BENCH_OUTPUT_DIR:=$REPO_DIR/bench/results}"
 
 BENCH_BIN="$LLAMA_CPP_BENCH_BACKEND_DIR/llama-bench"
@@ -30,6 +31,7 @@ Environment:
   GEMMA_BENCH_THREADS          $GEMMA_BENCH_THREADS
   GEMMA_BENCH_REPETITIONS      $GEMMA_BENCH_REPETITIONS
   GEMMA_BENCH_GPU_LAYERS       $GEMMA_BENCH_GPU_LAYERS
+  GEMMA_BENCH_DEVICE           $GEMMA_BENCH_DEVICE
   GEMMA_BENCH_OUTPUT_DIR       $GEMMA_BENCH_OUTPUT_DIR
 EOF
 }
@@ -43,6 +45,7 @@ common_args() {
     -r "$GEMMA_BENCH_REPETITIONS" \
     -o jsonl \
     -t "$GEMMA_BENCH_THREADS" \
+    -dev "$GEMMA_BENCH_DEVICE" \
     -mmp 1
 }
 
@@ -74,6 +77,7 @@ write_metadata() {
     printf 'threads=%s\n' "$GEMMA_BENCH_THREADS"
     printf 'repetitions=%s\n' "$GEMMA_BENCH_REPETITIONS"
     printf 'gpu_layers=%s\n' "$GEMMA_BENCH_GPU_LAYERS"
+    printf 'device=%s\n' "$GEMMA_BENCH_DEVICE"
   } > "$RESULT_DIR/metadata.env"
 
   if command -v rocm-smi >/dev/null 2>&1; then

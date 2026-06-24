@@ -76,7 +76,7 @@ stack/llama_cpp/bench_gemma.sh devices
 If this reports no devices, the Vulkan benchmark is not measuring the same path
 as the server. Fix that before interpreting any performance numbers.
 
-Observed preflight on 2026-06-24:
+Observed preflight on 2026-06-24 after freeing VRAM:
 
 ```text
 load_backend: loaded RPC backend from /home/lexa/Downloads/backends/llama-cpp-vulkan-full/libggml-rpc.so
@@ -87,17 +87,16 @@ ggml_vulkan: 1 = AMD Radeon Graphics (RADV RAPHAEL_MENDOCINO) (radv) | uma: 1 | 
 load_backend: loaded Vulkan backend from /home/lexa/Downloads/backends/llama-cpp-vulkan-full/libggml-vulkan.so
 load_backend: loaded CPU backend from /home/lexa/Downloads/backends/llama-cpp-vulkan-full/libggml-cpu-zen4.so
 Available devices:
-  Vulkan0: AMD Radeon RX 9060 XT (RADV GFX1200) (16304 MiB, 1646 MiB free)
+  Vulkan0: AMD Radeon RX 9060 XT (RADV GFX1200) (16304 MiB, 15640 MiB free)
   Vulkan1: AMD Radeon Graphics (RADV RAPHAEL_MENDOCINO) (32215 MiB, 32185 MiB free)
 ```
 
-Interpretation:
+Readiness judgment:
 
-- Good: `llama-bench` sees the discrete GPU as `Vulkan0`.
-- Good: the discrete GPU supports fp16, bf16, integer dot product, and KHR cooperative matrix cores.
-- Expected caveat: RADV warns that it is not a conformant Vulkan implementation.
-- Current blocker for clean tests: `Vulkan0` had only `1646 MiB free`, so a benchmark run in that state would mostly measure contention or memory pressure. Stop the running Gemma server, LM Studio, and other GPU-heavy workloads before benchmarking.
-- Do not use `Vulkan1` for the main result. It is the integrated GPU and is not representative for Gemma 12B performance.
+- Ready: `Vulkan0` now has `15640 MiB free`, enough for a clean Gemma 12B Q4 benchmark.
+- Ready: dry-run command expansion succeeds.
+- Important: the wrapper pins benchmark runs to `Vulkan0` with `-dev Vulkan0` so the integrated GPU does not pollute the result.
+- Remaining caveat: keep the desktop and other GPU workloads quiet during the run, because benchmark validity depends on stable GPU load and available VRAM.
 
 Review the planned commands without running them:
 
@@ -133,7 +132,7 @@ The script records:
 The suite starts with a baseline close to the tuned server settings:
 
 ```text
--t 8 -ngl 999 -fa on -b 2048 -ub 512 -ctk f16 -ctv f16 -pg 512,128
+-t 8 -dev Vulkan0 -ngl 999 -fa on -b 2048 -ub 512 -ctk f16 -ctv f16 -pg 512,128
 ```
 
 Then it varies one axis at a time:
